@@ -1,1 +1,24 @@
-
+{
+  "name": "towerdefense",
+  "version": "1.0.0",
+  "description": "A sci-fi tower defense that can be played on your browser.",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexmunoz502/TowerDefense.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexmunoz502/TowerDefense/issues"
+  },
+  "homepage": "https://github.com/alexmunoz502/TowerDefense#readme",
+  "dependencies": {
+    "parcel-bundler": "^1.12.5",
+    "phaser": "^3.55.2"
+  }
+}
