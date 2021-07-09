@@ -1,0 +1,9 @@
+{
+    "name": "basic_tower",
+    "type": "single_target",
+    "projectile": "basic_tower_projectile",
+    "damage": 25,
+    "range": 250,
+    "cooldown": 0.25,
+    "scale": 0.5
+}
