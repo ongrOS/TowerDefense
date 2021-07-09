@@ -1,26 +1,21 @@
 import * as data from "../json/*.json"
 
-class Tower extends Phaser.GameObjects.Sprite {
-    constructor(x, y, towerName) {
-        super();
+class Tower extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, x, y, towerName) {
+        super(scene, x, y, towerName);
+        var towerData = data[towerName];
+        this.name = towerData.name;
+        this.texture = towerName;
+        this.type = towerData.type;
+        this.projectile = towerData.projectile;
+        this.scale = towerData.scale;
+        this.range = towerData.range;
+        this.currentCD = 0;
+        this.enemiesInRange = new Set();
+        this.cooldown = towerData.cooldown * 60;
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
     }
 }
 
-// Creates a new tower using stats from "{towerName}.json" at coordinates(x, y)
-const addTower = function addTower(x, y, towerName, towers) {
-    var towerData = data[towerName];
-    console.log(towerData)
-    var t = towers.create(x, y, towerName);
-    t.name = towerData.name;
-    t.type = towerData.type;
-    t.projectile = towerData.projectile;
-    t.scale = towerData.scale;
-    t.range = towerData.range;
-    t.currentCD = 0;
-    t.enemiesInRange = new Set();
-    t.cooldown = towerData.cooldown * 60;
-    console.log(t)
-}
-
-module.exports.Tower = Tower
-module.exports = { addTower }
+module.exports = Tower

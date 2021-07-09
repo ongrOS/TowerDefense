@@ -1,6 +1,6 @@
 import images from '../assets/*.png';
 
-const Towers = require("./tower.js")
+const Tower = require("./tower.js")
 
 class LevelOneScene extends Phaser.Scene {
   constructor() {
@@ -19,9 +19,8 @@ class LevelOneScene extends Phaser.Scene {
 
     // Static/dynamic object groups
     let bullets = this.physics.add.group();
+    let newTower = new Tower(this, 300, 200, "basic_tower")
 
-    let towers = this.physics.add.group({ classType: Towers.Tower });
-    Towers.addTower(50, 150, "basic_tower", towers);
 
     // Image/object placement
     this.add.text(50, 50, "Sample text");
