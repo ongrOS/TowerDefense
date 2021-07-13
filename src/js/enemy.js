@@ -1,20 +1,54 @@
-import * as data from "../json/*.json"
-
 class Enemy extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, enemyName) {
+    // Initialization
+    constructor(scene, x, y, enemyData) {        
+        // Sprite
         super(scene, x, y, enemyName);
-        var enemyData = data[enemyName];
-        console.log(enemyData)
-        this.name = enemyData.name;
-        this.texture = enemyName;
-        this.damage = enemyData.damage;
-        this.speed = enemyData.speed;
         this.scale = enemyData.scale;
-        this.health = enemyData.health;
+
+        // Private Attributes
+        this._name = enemyData.name;
+        this._health = enemyData.health;
+        this._damage = enemyData.damage;
+        this._speed = enemyData.speed;
+        
+        // Instantiation into the game world    
         scene.add.existing(this);
         var newEnemy = scene.physics.add.existing(this);
         newEnemy.body.debugShowBody = false;
     }
+
+    // Getters
+    get name() {
+        return this._name;
+    }
+
+    get health() {
+        return this._health;
+    }
+
+    get damage() {
+        return this._damage;
+    }
+
+    get speed() {
+        return this._speed;
+    }
+
+    // Public Methods
+    checkIsDead() {
+        return this._health <= 0 ? true : false;
+    }
+
+    takeDamage(damageValue) {
+        this._health -= damageValue;
+        if (this.checkIsDead()) this.die();
+    }
+
+    die() {
+        // TODO: death animation ?
+        this.destroy(true);
+    }
+
 }
 
 module.exports = Enemy
