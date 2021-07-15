@@ -3,12 +3,17 @@ import * as data from "../json/*.json"
 const Bullet = require("./bullet.js")
 
 class Tower extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, towerName) {
-        super(scene, x, y, towerName);
-        console.log(towerName)
-        var towerData = data[towerName];
+    constructor(scene, x, y, towerData) {
+        super(scene, x, y, towerData);
+
+        // dynamically load in tower sprite
+        scene.load.image('towerSprite', images[towerData.name])
+        scene.load.start()
+        scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+            // texture loaded so use instead of the placeholder
+            this.setTexture('towerSprite')
+        })
         this.name = towerData.name;
-        this.texture = towerName;
         this.type = towerData.type;
         this.projectile = towerData.projectile;
         this.scale = towerData.scale;
@@ -20,6 +25,10 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         var newTower = scene.physics.add.existing(this);
         newTower.body.debugShowBody = false;
+    }
+
+    update(time, delta) {
+        //
     }
 
     attackEnemies(bullets, enemies) {
