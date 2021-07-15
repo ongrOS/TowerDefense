@@ -4,6 +4,7 @@ const Tower = require("./tower.js")
 const Enemy = require("./enemy.js")
 const Bullet = require("./bullet.js")
 const TowerManager = require("./towerManager.js")
+const EnemyManager = require("./enemyManager.js")
 
 let curScene;
 let towers;
@@ -29,10 +30,13 @@ class LevelOneScene extends Phaser.Scene {
     // World properties
     this.physics.world.setBounds(0, 0, 800, 600);
 
-    this.registry.groups = {}
-    console.log(this)
+    this.registry.managers = {};
+
     let towerManager = new TowerManager(this);
-    towerManager.addTower(300, 200, "basic_tower")
+    towerManager.addTower(300, 200, "basic_tower");
+
+    let enemyManager = new EnemyManager(this);
+    enemyManager.addEnemy(400, 200, "test_enemy");
 
 
 

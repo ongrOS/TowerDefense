@@ -1,17 +1,26 @@
+import images from '../assets/*.png';
+
 class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Initialization
-    constructor(scene, x, y, enemyData) {        
-        // Sprite
-        super(scene, x, y, enemyName);
-        this.scale = enemyData.scale;
+    constructor(scene, x, y, enemyData) {
+        super(scene, x, y, enemyData);
 
+        // dynamically load in enemy sprite
+        scene.load.image('enemySprite', images[enemyData.name])
+        scene.load.start()
+        scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+            // texture loaded so use instead of the placeholder
+            this.setTexture('enemySprite')
+        })
+
+        this.scale = enemyData.scale;
         // Private Attributes
         this._name = enemyData.name;
         this._health = enemyData.health;
         this._damage = enemyData.damage;
         this._speed = enemyData.speed;
-        
-        // Instantiation into the game world    
+
+        // Instantiation into the game world
         scene.add.existing(this);
         var newEnemy = scene.physics.add.existing(this);
         newEnemy.body.debugShowBody = false;

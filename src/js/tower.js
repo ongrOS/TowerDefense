@@ -1,5 +1,4 @@
 import images from '../assets/*.png';
-import * as data from "../json/*.json"
 const Bullet = require("./bullet.js")
 
 class Tower extends Phaser.Physics.Arcade.Sprite {
@@ -28,7 +27,7 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(time, delta) {
-        //
+        this.attackEnemies(null, this.scene.registry.managers['enemies'])
     }
 
     attackEnemies(bullets, enemies) {
@@ -37,8 +36,9 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
                 Phaser.Math.Distance.Between(enemy.x, enemy.y, this.x, this.y) <= this.range
             ) {
                 if (this.currentCD == 0) {
-                    let newBullet = bullets.add(new Bullet(this.scene, this.x, this.y, this.projectile, enemy))
-                    this.scene.physics.add.overlap(enemy, newBullet, this.bulletLanded, null, this);
+                    console.log("attack");
+                    // let newBullet = bullets.add(new Bullet(this.scene, this.x, this.y, this.projectile, enemy))
+                    // this.scene.physics.add.overlap(enemy, newBullet, this.bulletLanded, null, this);
                     this.currentCD += 1;
                 }
                 this.setTint(0xfc0303);
