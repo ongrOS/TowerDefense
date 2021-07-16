@@ -5,14 +5,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, enemyData) {
         super(scene, x, y, enemyData);
 
-        // dynamically load in enemy sprite
-        scene.load.image('enemySprite', images[enemyData.name])
-        scene.load.start()
-        scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-            // texture loaded so use instead of the placeholder
-            this.setTexture('enemySprite')
-        })
-
+        this.setTexture(enemyData.name)
         this.scale = enemyData.scale;
         // Private Attributes
         this._name = enemyData.name;
@@ -23,7 +16,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         // Instantiation into the game world
         scene.add.existing(this);
         var newEnemy = scene.physics.add.existing(this);
-        newEnemy.body.debugShowBody = false;
+        // newEnemy.body.debugShowBody = false;
     }
 
     // Getters
@@ -44,18 +37,18 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Public Methods
-    checkIsDead() {
+    isDead() {
         return this._health <= 0 ? true : false;
     }
 
     takeDamage(damageValue) {
         this._health -= damageValue;
-        if (this.checkIsDead()) this.die();
+        if (this.isDead()) this.die();
     }
 
     die() {
         // TODO: death animation ?
-        this.destroy(true);
+        this.scene.registry.managers["enemies"].remove(this, true, true);
     }
 
 }

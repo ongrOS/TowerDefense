@@ -10,6 +10,7 @@ class TowerManager {
     addTower(x, y, towerName) {
         var towerData = data[towerName];
         this._children.add(new Tower(this._scene, x, y, towerData));
+        this._scene.registry.managers["towers"] = this._children
     }
 
     get children() {
