@@ -37,14 +37,14 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
                     bullets.add(new Bullet(this.scene, this, enemy))
                     this.currentCD += 1;
                 }
-                this.setTint(0xfc0303);
+                // this.setTint(0xfc0303);
                 this.enemiesInRange.add(enemy);
             } else {
                 this.enemiesInRange.delete(enemy);
             }
         }
         if (this.enemiesInRange.size == 0) {
-            this.clearTint();
+            // this.clearTint();
         }
         if (this.currentCD != 0) {
             this.currentCD += 1;

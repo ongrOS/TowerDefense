@@ -16,7 +16,6 @@ class EnemyManager {
     }
 
     addToPath(scene, path, enemyName) {
-        console.log(path)
         let enemy = this.addEnemy(50, 500, enemyName)
         var f = { t: 0, vec: new Phaser.Math.Vector2() };
         scene.tweens.add({
