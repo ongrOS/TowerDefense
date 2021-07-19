@@ -8,9 +8,27 @@ class EnemyManager {
         scene.registry.managers['enemies'] = this._children;
     }
 
-    addEnemy(x, y, enemyName) {
+    addEnemy(x, y, enemyName, path) {
         var enemyData = data[enemyName];
-        this._children.add(new Enemy(this._scene, x, y, enemyData));
+        let newEnemy = new Enemy(this._scene, x, y, enemyData)
+        this._children.add(newEnemy);
+        return newEnemy;
+    }
+
+    addToPath(scene, path, enemyName) {
+        console.log(path)
+        let enemy = this.addEnemy(50, 500, enemyName)
+        var f = { t: 0, vec: new Phaser.Math.Vector2() };
+        scene.tweens.add({
+            targets: f,
+            t: 1,
+            ease: "Linear",
+            duration: 5000 / enemy.speed,
+            yoyo: false,
+            repeat: -1
+        });
+        enemy.path = path
+        enemy.follower = f;
     }
 
     get children() {
