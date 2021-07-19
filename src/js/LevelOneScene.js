@@ -47,9 +47,9 @@ class LevelOneScene extends Phaser.Scene {
 
 
     let sidebar = this.add.rectangle(900, 300, 200, 600, 0x474c59);
-    var tower_select = this.add.sprite(1000, 300, "basic_tower").setInteractive();
+    var tower_select = this.add.sprite(900, 300, "basic_tower").setInteractive();
     tower_select.on("pointerdown", function (pointer) {
-      placeholder = cur_scene.add.sprite(1000, 300, "basic_tower").setInteractive();
+      placeholder = cur_scene.add.sprite(900, 300, "basic_tower").setInteractive();
       placeholder.scale = 0.5;
       placeholder.on("pointerdown", function (pointer) {
         towerManager.addTower(placeholder.x, placeholder.y, "basic_tower");
