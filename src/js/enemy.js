@@ -1,20 +1,22 @@
+import images from '../assets/*.png';
+
 class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Initialization
-    constructor(scene, x, y, enemyData) {        
-        // Sprite
-        super(scene, x, y, enemyName);
-        this.scale = enemyData.scale;
+    constructor(scene, x, y, enemyData, path) {
+        super(scene, x, y, enemyData, path);
 
+        this.setTexture(enemyData.name)
+        this.scale = enemyData.scale;
         // Private Attributes
         this._name = enemyData.name;
         this._health = enemyData.health;
         this._damage = enemyData.damage;
         this._speed = enemyData.speed;
-        
-        // Instantiation into the game world    
+
+        // Instantiation into the game world
         scene.add.existing(this);
         var newEnemy = scene.physics.add.existing(this);
-        newEnemy.body.debugShowBody = false;
+        // newEnemy.body.debugShowBody = false;
     }
 
     // Getters
@@ -35,18 +37,27 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Public Methods
-    checkIsDead() {
+    isDead() {
         return this._health <= 0 ? true : false;
     }
 
     takeDamage(damageValue) {
         this._health -= damageValue;
-        if (this.checkIsDead()) this.die();
+        if (this.isDead()) this.die();
     }
 
     die() {
         // TODO: death animation ?
-        this.destroy(true);
+        this.scene.registry.managers["enemies"].remove(this, true, true);
+    }
+
+    update() {
+        // update the tween this enemy is 'following'
+        this.path.getPoint(this.follower.t, this.follower.vec);
+
+        // update enemy/sprite coordinates to match tween
+        this.x = this.follower.vec.x;
+        this.y = this.follower.vec.y;
     }
 
 }

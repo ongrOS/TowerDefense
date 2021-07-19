@@ -1,7 +1,9 @@
 {
     "name": "basic_tower",
-    "type": "single_target",
-    "projectile": "basic_attack",
+    "type": "homing",
+    "projectile": "bullet",
+    "projectile_speed" : 450,
+    "projectile_duration" : 300,
     "damage": 25,
     "range": 250,
     "cooldown": 1.0,

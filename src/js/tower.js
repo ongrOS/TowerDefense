@@ -1,25 +1,31 @@
 import images from '../assets/*.png';
-import * as data from "../json/*.json"
 const Bullet = require("./bullet.js")
 
+
 class Tower extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, towerName) {
-        super(scene, x, y, towerName);
-        console.log(towerName)
-        var towerData = data[towerName];
+    constructor(scene, x, y, towerData) {
+        super(scene, x, y, towerData);
+
+        this.setTexture(towerData.name)
         this.name = towerData.name;
-        this.texture = towerName;
         this.type = towerData.type;
         this.projectile = towerData.projectile;
+        this.projectileSpeed = towerData.projectile_speed;
+        this.projectileDuration = towerData.projectile_duration;
+        this.damage = towerData.damage;
         this.scale = towerData.scale;
         this.range = towerData.range;
         this.currentCD = 0;
         this.enemiesInRange = new Set();
         this.cooldown = towerData.cooldown * 60;
-        this.scene = scene
+        this.scene = scene;
         scene.add.existing(this);
         var newTower = scene.physics.add.existing(this);
         newTower.body.debugShowBody = false;
+    }
+
+    update(time, delta) {
+        this.attackEnemies(this.scene.registry.managers['bullets'], this.scene.registry.managers['enemies'])
     }
 
     attackEnemies(bullets, enemies) {
@@ -28,18 +34,17 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
                 Phaser.Math.Distance.Between(enemy.x, enemy.y, this.x, this.y) <= this.range
             ) {
                 if (this.currentCD == 0) {
-                    let newBullet = bullets.add(new Bullet(this.scene, this.x, this.y, this.projectile, enemy))
-                    this.scene.physics.add.overlap(enemy, newBullet, this.bulletLanded, null, this);
+                    bullets.add(new Bullet(this.scene, this, enemy))
                     this.currentCD += 1;
                 }
-                this.setTint(0xfc0303);
+                // this.setTint(0xfc0303);
                 this.enemiesInRange.add(enemy);
             } else {
                 this.enemiesInRange.delete(enemy);
             }
         }
         if (this.enemiesInRange.size == 0) {
-            this.clearTint();
+            // this.clearTint();
         }
         if (this.currentCD != 0) {
             this.currentCD += 1;
@@ -49,16 +54,19 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    // this currently isnt being used
     bulletLanded(enemy, bullet) {
-        enemy.health -= bullet.damage;
+        enemy.takeDamage(bullet.damage)
+        console.log("bulletlanded")
+        console.log(enemy.health)
         bullet.destroy(true);
         if (enemy.health <= 0) {
-            this.scene.registry.groups.towers.children.iterate(function (tower) {
+            this.scene.registry.managers.towers.children.iterate(function (tower) {
                 tower.enemiesInRange.delete(enemy);
             });
             enemy.destroy(true);
 
-            this.scene.registry.groups.bullets.children.iterate(function (bullet) {
+            this.scene.registry.managers.bullets.children.iterate(function (bullet) {
                 if (bullet.dest == enemy) {
                     bullet.destroy(true);
                 }
