@@ -1,4 +1,4 @@
-import * as data from "../json/*.json"
+import * as data from "../data/*.json"
 const Enemy = require("./enemy.js")
 
 class EnemyManager {
