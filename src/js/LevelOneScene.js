@@ -110,6 +110,10 @@ class LevelOneScene extends Phaser.Scene {
     }
 
     healthDisplay.setText(this.player.health);
+    
+    if (this.player.health <= 0){
+      this.scene.restart();
+    }
 
   }
 
