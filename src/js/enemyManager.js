@@ -16,7 +16,8 @@ class EnemyManager {
     }
 
     addToPath(scene, path, enemyName) {
-        let enemy = this.addEnemy(50, 500, enemyName)
+        console.log(path)
+        let enemy = this.addEnemy(path.startX, path.startY, enemyName)
         var f = { t: 0, vec: new Phaser.Math.Vector2() };
         scene.tweens.add({
             targets: f,
@@ -24,7 +25,7 @@ class EnemyManager {
             ease: "Linear",
             duration: 5000 / enemy.speed,
             yoyo: false,
-            repeat: -1
+            repeat: 0
         });
         enemy.path = path
         enemy.follower = f;

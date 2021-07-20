@@ -29,11 +29,11 @@ class LevelScene extends Phaser.Scene {
         // Background Image
         var bgImageName = this._levelData.background
         this.load.image('levelBg', backgroundImages[bgImageName])
-    
+
     }
 
     create() {
-        
+
         // Controls
         this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
 
@@ -69,6 +69,10 @@ class LevelScene extends Phaser.Scene {
         for (var i = 0; i < this._levelData.path.length; i++) {
             var lineData = this._levelData.path[i]
             path.add(new Phaser.Curves.Line(lineData));
+            if (i == 0) {
+                path.startX = lineData[0];
+                path.startY = lineData[1];
+            }
         }
         //path.draw(graphics);
 
@@ -77,7 +81,7 @@ class LevelScene extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-A', () => {
 
-        this._enemyManager.addToPath(this, path, "test_enemy")
+            this._enemyManager.addToPath(this, path, "test_enemy")
 
         }, this);
     }
