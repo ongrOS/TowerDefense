@@ -1,5 +1,5 @@
 import 'phaser';
-import LevelOneScene from './LevelOneScene.js';
+import LevelOneScene from './levelOneScene.js';
 
 // Scenes here
 var levelOne = new LevelOneScene();
