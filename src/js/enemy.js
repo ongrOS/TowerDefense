@@ -12,6 +12,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this._health = enemyData.health;
         this._damage = enemyData.damage;
         this._speed = enemyData.speed;
+        this.scene = scene
 
         // Instantiation into the game world
         scene.add.existing(this);
@@ -36,6 +37,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         return this._speed;
     }
 
+
     // Public Methods
     isDead() {
         return this._health <= 0 ? true : false;
@@ -58,6 +60,16 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         // update enemy/sprite coordinates to match tween
         this.x = this.follower.vec.x;
         this.y = this.follower.vec.y;
+        if (this.follower.t == 1) {
+            if (this.scene.registry.managers["towers"] !== undefined) {
+                this.scene.registry.managers["towers"].children.iterate(function (tower) {
+                    tower.enemiesInRange.delete(this);
+                });
+            }
+            this.scene.player.health -= this.damage
+            this.disableBody(true, true);
+            this.scene.registry.managers["enemies"].remove(this, true, true);
+        }
     }
 
 }
