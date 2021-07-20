@@ -1,4 +1,5 @@
 import images from '../assets/*.png';
+
 const Tower = require("./tower.js")
 const Enemy = require("./enemy.js")
 const Bullet = require("./bullet.js")
@@ -58,7 +59,9 @@ class LevelOneScene extends Phaser.Scene {
 
       placeholder = cur_scene.add.sprite(1000, 300, "basic_tower").setInteractive();
       placeholder.scale = 1;
+
       placeholder.alpha = 0.5;
+
       placeholder.on("pointerdown", function (pointer) {
         var newTowerX = Math.floor(placeholder.x / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
         var newTowerY = Math.floor(placeholder.y / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
