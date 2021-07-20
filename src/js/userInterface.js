@@ -23,7 +23,7 @@ class UserInterface {
                 var newTowerX = Math.floor(UI.placeholder.x / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
                 var newTowerY = Math.floor(UI.placeholder.y / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
                 UI.level.addTower(newTowerX, newTowerY, "basic_tower");
-                //UI.placeholder.destroy(true);
+                if (!UI.level.shiftKey.isDown) UI.placeholder.destroy(true);
             });
         });
 

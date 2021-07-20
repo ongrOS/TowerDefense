@@ -33,6 +33,10 @@ class LevelScene extends Phaser.Scene {
     }
 
     create() {
+        
+        // Controls
+        this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+
         this.add.image(270, 270, 'levelBg')
         // Player
         this.player = {
