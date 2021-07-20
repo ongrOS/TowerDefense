@@ -4,7 +4,8 @@
   "description": "A sci-fi tower defense that can be played on your browser.",
   "main": "index.js",
   "scripts": {
-    "start": "parcel src/index.html",
+    "start": "parcel src/index.html --port 65456",
+    "build": "parcel build src/index.html",
     "test": "mocha test/test.js"
   },
   "repository": {
