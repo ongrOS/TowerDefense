@@ -19,25 +19,44 @@ class Bullet extends Phaser.GameObjects.Sprite {   // What is the difference bet
         this.depth = 1;
         scene.add.existing(this);
         scene.physics.add.existing(this);
+
+        // Get angle to target ("direction") using trigonometry
+        this.updateDirection()
+    }
+
+    updateDirection () {
+        this.direction = this.getAngleToTarget()
+        this.xSpeed = Math.sign(this.target.y - this.y) * this.speed
+        this.ySpeed = Math.sign(this.target.y - this.y) * this.speed
+    }
+
+    getAngleToTarget() {
+        let oppositeSide = this.target.x - this.x;
+        let adjacentSide = this.target.y - this.y;
+        let angle = Math.atan(oppositeSide / adjacentSide)
+        return angle;
     }
 
     // TODO: Getters and setters
 
     // Alternative way of handling lifespan to handling it in the scene update()
     // preUpdate() {
-    //     this.duration -= 10;
+    //     this.duration -= 10
     //     if (this.duration < 1) {
     //         this.destroy();
     //     }
     // }
     update(time, delta) {
-        if (this.behavior == "homing") {
-            this.scene.physics.moveToObject(
-                this,
-                this.target,
-                this.speed
-            );
+        if (this.behavior == "homing" && this.target.active) {
+            this.updateDirection()
         }
+
+        let targetPosition = {
+            x: this.x + (this.xSpeed * Math.sin(this.direction)),
+            y: this.y + (this.ySpeed * Math.cos(this.direction))
+        };
+        
+        this.scene.physics.moveToObject(this, targetPosition, this.speed)
         this.checkCollision();
         this.duration -= 1;
         if (this.duration < 1) {
