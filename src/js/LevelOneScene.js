@@ -7,6 +7,8 @@ const TowerManager = require("./towerManager.js")
 const EnemyManager = require("./enemyManager.js")
 
 let placeholder = null;
+let playerHealth = 20;
+let healthDisplay;
 
 const CELL_SIZE = 54
 const CELL_OFFSET = CELL_SIZE / 2
@@ -27,6 +29,8 @@ class LevelOneScene extends Phaser.Scene {
 
   create() {
     let cur_scene = this;
+    this.player = {}
+    this.player.health = playerHealth
     // World properties
     this.physics.world.setBounds(0, 0, 800, 600);
 
@@ -52,6 +56,7 @@ class LevelOneScene extends Phaser.Scene {
     let sidebar = this.add.rectangle(900, 300, 200, 600, 0x474c59);
     var tower_select = this.add.sprite(900, 300, "basic_tower").setInteractive();
     tower_select.on("pointerdown", function (pointer) {
+
       placeholder = cur_scene.add.sprite(1000, 300, "basic_tower").setInteractive();
       placeholder.scale = 1;
       placeholder.on("pointerdown", function (pointer) {
@@ -80,7 +85,6 @@ class LevelOneScene extends Phaser.Scene {
 
 
     enemyManager.addToPath(this, path, "test_enemy");
-    console.log(this);
 
     this.input.keyboard.on('keydown-A', () => {
 
@@ -90,7 +94,8 @@ class LevelOneScene extends Phaser.Scene {
 
 
     // Image/object placement
-    // this.add.text(50, 50, "Sample text");
+    this.add.text(50, 50, "Health: ");
+    healthDisplay = this.add.text(120, 50, playerHealth)
 
 
   }
@@ -104,6 +109,7 @@ class LevelOneScene extends Phaser.Scene {
       placeholder.y = Math.floor(this.game.input.mousePointer.worldY / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
     }
 
+    healthDisplay.setText(this.player.health);
 
   }
 
