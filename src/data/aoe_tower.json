@@ -1,0 +1,12 @@
+{
+    "name": "aoe_tower",
+    "type": "stationary-aoe",
+    "projectile": null,
+    "projectile_speed" : null,
+    "projectile_duration" : null,
+    "accuracy": 1.0,
+    "damage": 25,
+    "range": 80,
+    "cooldown": 1.25,
+    "scale": 1
+}

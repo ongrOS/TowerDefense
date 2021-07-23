@@ -65,7 +65,6 @@ class LevelScene extends Phaser.Scene {
         graphics.lineStyle(2, 0xffffff, 1);
 
         let path = this.add.path();
-        console.log(this._levelData.path)
         for (var i = 0; i < this._levelData.path.length; i++) {
             var lineData = this._levelData.path[i]
             path.add(new Phaser.Curves.Line(lineData));

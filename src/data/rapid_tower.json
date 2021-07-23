@@ -1,0 +1,12 @@
+{
+    "name": "rapid_tower",
+    "type": "non-homing",
+    "projectile": "bullet",
+    "projectile_speed" : 1100,
+    "projectile_duration" : 300,
+    "accuracy": 0.6,
+    "damage": 5,
+    "range": 225,
+    "cooldown": 0.2,
+    "scale": 1
+}

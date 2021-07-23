@@ -16,6 +16,7 @@ class Bullet extends Phaser.GameObjects.Sprite {   // What is the difference bet
         this.damage = parent.damage;
         this.target = target;
         this.duration = parent.projectileDuration;
+        this.stopTargeting = false
         this.depth = 1;
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -24,8 +25,9 @@ class Bullet extends Phaser.GameObjects.Sprite {   // What is the difference bet
         this.updateDirection()
     }
 
-    updateDirection () {
-        this.direction = this.getAngleToTarget()
+    updateDirection() {
+        // Introduces 'randomness' into bullet direction. Set tower accuracy to 1.0 for no randomness
+        this.direction = this.getAngleToTarget() + Phaser.Math.FloatBetween(this.parent.accuracy - 1, 1 - this.parent.accuracy);
         this.xSpeed = Math.sign(this.target.y - this.y) * this.speed
         this.ySpeed = Math.sign(this.target.y - this.y) * this.speed
     }
@@ -33,7 +35,7 @@ class Bullet extends Phaser.GameObjects.Sprite {   // What is the difference bet
     getAngleToTarget() {
         let oppositeSide = this.target.x - this.x;
         let adjacentSide = this.target.y - this.y;
-        let angle = Math.atan(oppositeSide / adjacentSide)
+        let angle = Math.atan(oppositeSide / adjacentSide);
         return angle;
     }
 
@@ -51,30 +53,46 @@ class Bullet extends Phaser.GameObjects.Sprite {   // What is the difference bet
             this.updateDirection()
         }
 
-        let targetPosition = {
-            x: this.x + (this.xSpeed * Math.sin(this.direction)),
-            y: this.y + (this.ySpeed * Math.cos(this.direction))
-        };
-        
-        this.scene.physics.moveToObject(this, targetPosition, this.speed)
-        this.checkCollision();
+
+        if (!this.stopTargeting || this.behavior != "non-homing") {
+            let targetPosition = {
+                x: this.x + (this.xSpeed * Math.sin(this.direction)),
+                y: this.y + (this.ySpeed * Math.cos(this.direction))
+            };
+            this.scene.physics.moveToObject(this, targetPosition, this.speed)
+            this.stopTargeting = true;
+        }
+        this.checkCollision(this);
         this.duration -= 1;
         if (this.duration < 1) {
             this.destroy();
         }
     }
 
-    checkCollision() {
-        if (Phaser.Math.Distance.Between(this.target.x, this.target.y, this.x, this.y) <= 20) {
-            if (this.target.active) {
-                this.target.takeDamage(this.damage)
-                if (this.target.isDead) {
-                    this.parent.enemiesInRange.delete(this.target)
+    checkCollision(bullet) {
+        var scene = bullet.scene
+        switch (this.behavior) {
+            case "homing":
+                if (Phaser.Math.Distance.Between(this.target.x, this.target.y, this.x, this.y) <= 20) {
+                    if (this.target.active) {
+                        this.target.takeDamage(this.damage)
+                        this.scene.registry.managers["bullets"].remove(this, true, true)
+                    }
                 }
-                this.scene.registry.managers["bullets"].remove(this, true, true)
-            }
+                break
+            case "non-homing":
+                bullet.scene.registry.managers["enemies"].children.iterate(function (enemy) {
+                    if (bullet !== undefined && enemy !== undefined) {
+                        if (Phaser.Math.Distance.Between(enemy.x, enemy.y, bullet.x, bullet.y) <= 30) {
+                            if (enemy.active) {
+                                enemy.takeDamage(bullet.damage)
+                            }
+                            scene.registry.managers["bullets"].remove(bullet, true, true)
+                        }
+                    }
+                });
+                break;
         }
     }
 }
-
 module.exports = Bullet;

@@ -61,11 +61,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.x = this.follower.vec.x;
         this.y = this.follower.vec.y;
         if (this.follower.t == 1) {
-            if (this.scene.registry.managers["towers"] !== undefined) {
-                this.scene.registry.managers["towers"].children.iterate(function (tower) {
-                    tower.enemiesInRange.delete(this);
-                });
-            }
             this.scene.player.health -= this.damage
             this.disableBody(true, true);
             this.scene.registry.managers["enemies"].remove(this, true, true);
