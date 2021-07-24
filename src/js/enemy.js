@@ -64,7 +64,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.x = this.follower.vec.x;
         this.y = this.follower.vec.y;
         if (this.follower.t == 1) {
-            this.scene.registry.set('base_health', this.scene.registry.get('base_health') - this.damage);
+            this.scene.registry.set('base_health', (this.scene.registry.get('base_health') - this._damage));
             this.scene.registry.enemies.remove(this, true, true);
         }
     }

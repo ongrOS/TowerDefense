@@ -49,7 +49,7 @@ class UserInterface {
         }
 
         // Update player health info
-        this._healthDisplay.setText(this._scene.registry.health);
+        //this._healthDisplay.setText(this._scene.registry.health);
     }
 
     addToUI(x, y, towerName) {
