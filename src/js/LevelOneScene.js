@@ -40,13 +40,8 @@ class LevelOneScene extends Phaser.Scene {
     this.registry.managers = {};
 
     let towerManager = new TowerManager(this);
-    // let tower = towerManager.addTower(100, 450, "basic_tower");
-    // let tower2 = towerManager.addTower(450, 400, "basic_tower");
-    // towerManager.addTower(100, 200, "basic_tower");
-    // towerManager.addTower(500, 300, "basic_tower");
 
     let enemyManager = new EnemyManager(this);
-    // let enemy = enemyManager.addEnemy(475, 200, "test_enemy");
 
     let bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
     this.registry.managers["bullets"] = bullets;

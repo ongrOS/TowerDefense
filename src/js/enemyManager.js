@@ -3,15 +3,14 @@ const Enemy = require("./enemy.js")
 
 class EnemyManager {
     constructor(scene) {
-        this._scene = scene
-        this._children = scene.physics.add.group({ classType: Enemy, runChildUpdate: true });
-        scene.registry.managers['enemies'] = this._children;
+        this._scene = scene;
     }
 
     addEnemy(x, y, enemyName, path) {
         var enemyData = data[enemyName];
-        let newEnemy = new Enemy(this._scene, x, y, enemyData)
-        this._children.add(newEnemy);
+        let newEnemy = new Enemy(this._scene, x, y, enemyData);
+        this._scene.add.existing(newEnemy);
+        this._scene.registry.enemies.add(newEnemy);
         return newEnemy;
     }
 
@@ -26,12 +25,8 @@ class EnemyManager {
             yoyo: false,
             repeat: 0
         });
-        enemy.path = path
+        enemy.path = path;
         enemy.follower = f;
-    }
-
-    get children() {
-        return this._children
     }
 }
 

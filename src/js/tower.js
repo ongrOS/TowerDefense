@@ -19,25 +19,29 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         this.currentCD = 0;
         this.cooldown = towerData.cooldown * 60;
         this.scene = scene;
+
+        // Adds enemy to scene
         scene.add.existing(this);
-        var newTower = scene.physics.add.existing(this);
-        newTower.body.debugShowBody = false;
+        scene.registry.towers.add(this);
+        
+        this.body.debugShowBody = false;
     }
 
     update(time, delta) {
-        this.attackEnemies(this.scene.registry.managers['bullets'], this.scene.registry.managers['enemies'])
+        this.attackEnemies(this.scene.registry.bullets, this.scene.registry.enemies);
     }
+
     attackEnemies(bullets, enemies) {
         for (const enemy of enemies.children.entries) {
             if (Phaser.Math.Distance.Between(enemy.x, enemy.y, this.x, this.y) <= this.range) {
                 if (this.currentCD == 0) {
                     if (this.projectile !== null) {
-                        bullets.add(new Bullet(this.scene, this, enemy))
+                        this.scene.registry.bullets.add(new Bullet(this.scene, this, enemy));
                     }
                     else if (this.type == "stationary-aoe") {
                         // setting tint is only temp solution until aoe animation is implemented
                         this.setTint(0xfc0303);
-                        this.areaAttack()
+                        this.areaAttack();
                     }
                     this.currentCD += 1;
                 }
@@ -54,9 +58,9 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
     }
 
     areaAttack() {
-        for (const enemy of this.scene.registry.managers['enemies'].children.entries) {
+        for (const enemy of this.scene.registry.enemies.children.entries) {
             if (Phaser.Math.Distance.Between(enemy.x, enemy.y, this.x, this.y) <= this.range) {
-                enemy.takeDamage(this.damage)
+                enemy.takeDamage(this.damage);
             }
         }
     }

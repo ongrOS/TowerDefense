@@ -1,66 +1,65 @@
 import images from '../assets/*.png';
 import backgroundImages from '../assets/backgrounds/*.png';
-// Import Dependencies
+
 const UserInterface = require("./userInterface.js");
-const TowerManager = require("./towerManager.js")
-const EnemyManager = require("./enemyManager.js")
-const Bullet = require("./bullet.js")
+const TowerManager = require("./towerManager.js");
+const EnemyManager = require("./enemyManager.js");
+const Bullet = require("./bullet.js");
+const Tower = require("./tower.js");
+const Enemy = require("./enemy.js");
 
 class LevelScene extends Phaser.Scene {
     // Initialization
     constructor(levelData) {
-        // Scene
         super({ key: levelData.name });
-
-        // Private Attributes
+        
+        // Private scene properties
         this._levelData = levelData;
+    }
 
-        // Player Resources
-        this._playerCredits = levelData.startingCredits;
-        this._playerHealth = 100;
+    init(){
+        // Scene's registry data
+        this.registry.set('credits', this._levelData.startingCredits); 
+        this.registry.set('base_health', 20);
     }
 
     preload() {
-        // Enemy and Tower Sprites
+        // Scene object images
         for (const spriteName in images) {
-            this.load.image(spriteName, images[spriteName])
+            this.load.image(spriteName, images[spriteName]);
         }
 
         // Background Image
-        var bgImageName = this._levelData.background
+        var bgImageName = this._levelData.background;
         this.load.image('levelBg', backgroundImages[bgImageName])
 
     }
 
     create() {
-
-        // Controls
-        this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
-
-        this.add.image(270, 270, 'levelBg')
-        // Player
-        this.player = {
-            health: 20
-        }
-
         // World Properties
         this.physics.world.setBounds(0, 0, this._levelData.width, this._levelData.height);
-        this.registry.groups = {};
-        this.registry.managers = {};
+
+        // Background
+        this.add.image(270, 270, 'levelBg');
+
+        // Physics groups
+        // NOTE: These physics groups were added indirectly by manager classes, but since
+        // the scene owns the physics group, they should be created here.
+        this.registry.bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
+        this.registry.towers = this.physics.add.group({ classType: Tower, runChildUpdate: true });
+        this.registry.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
+
+        // Controls
+        this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);       
 
         // Initialize Managers
         this._userInterface = new UserInterface(this);
-        this._userInterface.create()
-
         this._enemyManager = new EnemyManager(this, this._levelData.waveData);
         this._towerManager = new TowerManager(this);
 
         // Use Level Data to populate level
         // - spawn base
         // - create path from points, pass path to wave manager?
-        let bullets = this.physics.add.group({ classType: Bullet, runChildUpdate: true });
-        this.registry.managers["bullets"] = bullets;
-
         let graphics = this.add.graphics();
         graphics.lineStyle(2, 0xffffff, 1);
 
@@ -73,20 +72,18 @@ class LevelScene extends Phaser.Scene {
                 path.startY = lineData[1];
             }
         }
-        //path.draw(graphics);
-
+        // DEBUG: path.draw(graphics);
 
         this._enemyManager.addToPath(this, path, "test_enemy");
 
+        // Spawn an enemy manually
         this.input.keyboard.on('keydown-A', () => {
-
             this._enemyManager.addToPath(this, path, "test_enemy")
-
         }, this);
     }
 
     update() {
-        this._userInterface.update()
+        this._userInterface.update();
     }
 
     // Actions
