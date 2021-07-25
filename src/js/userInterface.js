@@ -34,7 +34,7 @@ class UserInterface {
     }
 
     // Triggered when health value changes
-    updateHealth(parent, key, data){
+    updateHealth(parent, key, data) {
         this._healthDisplay.setText(data);
     }
 
@@ -63,13 +63,32 @@ class UserInterface {
                 if (UI.placeholder.x <= (UI.sidebar.x - UI.sidebar.geom.centerX)) {  // Stops towers from being placed out of bounds on sidebar
                     var newTowerX = Math.floor(UI.placeholder.x / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
                     var newTowerY = Math.floor(UI.placeholder.y / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
-                    UI._scene.addTower(newTowerX, newTowerY, towerName);
+                    var newTower = UI._scene.addTower(newTowerX, newTowerY, towerName);
+                    // Shows tower stats when selecting tower.
+                    newTower.on("pointerdown", function (pointer) {
+                        UI._scene.towerStats.damage.setText("Damage: " + newTower.damage)
+                        UI._scene.towerStats.range.setText("Range: " + newTower.range)
+                        UI._scene.towerStats.attackSpeed.setText("Cooldown: " + newTower.cooldown / 60.0)
+                        if (newTower.rank < 3) UI.addUpgradeButton(newTower)
+                    });
                     if (!UI._scene.shiftKey.isDown) UI.placeholder.destroy(true);
                 }
                 else {
                     UI.placeholder.destroy(true);
                 }
             });
+        });
+    }
+
+    addUpgradeButton(tower) {
+        let btn = this._scene.add.rectangle(700, 550, 100, 50, 0x46cf6b).setInteractive()
+        btn.on("pointerdown", function (pointer) {
+            // remove button if tower is fully upgraded(rank 3)
+            if (tower.upgrade() >= 2) btn.destroy()
+            // Update tower stats display
+            UI._scene.towerStats.damage.setText("Damage: " + tower.damage)
+            UI._scene.towerStats.range.setText("Range: " + tower.range)
+            UI._scene.towerStats.attackSpeed.setText("Cooldown: " + tower.cooldown / 60.0)
         });
     }
 

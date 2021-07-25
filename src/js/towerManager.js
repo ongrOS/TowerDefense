@@ -23,12 +23,7 @@ class TowerManager {
             rangeDisplay.destroy();
         });
 
-        // Shows tower stats when selecting tower.
-        newTower.on("pointerdown", function (pointer) {
-            newTower.scene.towerStats.damage.setText("Damage: " + newTower.damage)
-            newTower.scene.towerStats.range.setText("Range: " + newTower.range)
-            newTower.scene.towerStats.attackSpeed.setText("Cooldown: " + newTower.cooldown / 60.0)
-        });
+        return newTower
     }
 }
 

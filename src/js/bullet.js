@@ -1,4 +1,4 @@
-class Bullet extends Phaser.GameObjects.Sprite {   
+class Bullet extends Phaser.GameObjects.Sprite {
     constructor(scene, parent, target) {
         super(scene, parent, target);
 
@@ -60,24 +60,25 @@ class Bullet extends Phaser.GameObjects.Sprite {
         }
     }
 
-    checkCollision() {
+    checkCollision(bullet) {
+        var scene = bullet.scene
         switch (this.behavior) {
             case "homing":
                 if (Phaser.Math.Distance.Between(this.target.x, this.target.y, this.x, this.y) <= 20) {
                     if (this.target.active) {
-                        this.target.takeDamage(this.damage);
-                        this.scene.registry.bullets.remove(this, true, true);
+                        this.target.takeDamage(this.damage)
+                        this.scene.registry["bullets"].remove(this, true, true)
                     }
                 }
-                break;
+                break
             case "non-homing":
-                this.scene.registry.enemies.children.iterate(function (enemy) {
-                    if (enemy !== undefined) {
-                        if (Phaser.Math.Distance.Between(enemy.x, enemy.y, this.x, this.y) <= 30) {
+                bullet.scene.registry["enemies"].children.iterate(function (enemy) {
+                    if (bullet !== undefined && enemy !== undefined) {
+                        if (Phaser.Math.Distance.Between(enemy.x, enemy.y, bullet.x, bullet.y) <= 30) {
                             if (enemy.active) {
-                                enemy.takeDamage(this.damage);
+                                enemy.takeDamage(bullet.damage)
                             }
-                            this.scene.registry.bullets.remove(this, true, true);
+                            scene.registry["bullets"].remove(bullet, true, true)
                         }
                     }
                 });

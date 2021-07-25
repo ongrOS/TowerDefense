@@ -13,17 +13,18 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         this.projectileSpeed = towerData.projectile_speed;
         this.projectileDuration = towerData.projectile_duration;
         this.accuracy = towerData.accuracy;
-        this.damage = towerData.damage;
+        this._damage = towerData.damage;
         this.scale = towerData.scale;
-        this.range = towerData.range;
+        this._rank = 0
+        this._range = towerData.range;
         this.currentCD = 0;
-        this.cooldown = towerData.cooldown * 60;
+        this._cooldown = towerData.cooldown;
         this.scene = scene;
 
         // Adds enemy to scene
         scene.add.existing(this);
         scene.registry.towers.add(this);
-        
+
         this.body.debugShowBody = false;
     }
 
@@ -50,7 +51,7 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         if (this.currentCD != 0) {
             this.currentCD += 1;
         }
-        if (this.currentCD == this.cooldown) {
+        if (this.currentCD >= this.cooldown) {
             this.currentCD = 0;
             // remove tint to show aoe tower is off cooldown
             this.clearTint();
@@ -63,6 +64,26 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
                 enemy.takeDamage(this.damage);
             }
         }
+    }
+
+    upgrade() {
+        if (this._rank < 2) {
+            this._rank += 1
+            return this._rank
+        }
+    }
+
+    get damage() {
+        return this._damage[this._rank]
+    }
+    get range() {
+        return this._range[this._rank]
+    }
+    get cooldown() {
+        return this._cooldown[this._rank] * 60.0
+    }
+    get rank() {
+        return this._rank + 1
     }
 
 }

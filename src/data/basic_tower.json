@@ -5,8 +5,8 @@
     "projectile_speed" : 450,
     "projectile_duration" : 300,
     "accuracy": 1.0,
-    "damage": 25,
-    "range": 250,
-    "cooldown": 1.0,
+    "damage": [25,35,50],
+    "range": [250,275,300],
+    "cooldown": [1.0, 0.975, 0.95],
     "scale": 1
 }

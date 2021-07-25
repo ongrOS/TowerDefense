@@ -12,14 +12,14 @@ class LevelScene extends Phaser.Scene {
     // Initialization
     constructor(levelData) {
         super({ key: levelData.name });
-        
+
         // Private scene properties
         this._levelData = levelData;
     }
 
-    init(){
+    init() {
         // Scene's registry data
-        this.registry.set('credits', this._levelData.startingCredits); 
+        this.registry.set('credits', this._levelData.startingCredits);
         this.registry.set('base_health', 20);
     }
 
@@ -50,7 +50,7 @@ class LevelScene extends Phaser.Scene {
         this.registry.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
 
         // Controls
-        this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);       
+        this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
 
         // Initialize Managers
         this._userInterface = new UserInterface(this);
@@ -92,7 +92,7 @@ class LevelScene extends Phaser.Scene {
     }
 
     addTower(x, y, towerName) {
-        this._towerManager.addTower(x, y, towerName)
+        return this._towerManager.addTower(x, y, towerName)
     }
 }
 
