@@ -17,6 +17,7 @@ class UserInterface {
         UI._scene.towerStats.damage = this._scene.add.text(620, 420, "Damage")
         UI._scene.towerStats.range = this._scene.add.text(620, 460, "Range")
         UI._scene.towerStats.attackSpeed = this._scene.add.text(620, 500, "Attack Speed")
+        UI.activeButton = false
 
 
         // Tower Placement Preview
@@ -69,9 +70,16 @@ class UserInterface {
                         UI._scene.towerStats.damage.setText("Damage: " + newTower.damage)
                         UI._scene.towerStats.range.setText("Range: " + newTower.range)
                         UI._scene.towerStats.attackSpeed.setText("Cooldown: " + newTower.cooldown / 60.0)
-                        if (newTower.rank < 3) UI.addUpgradeButton(newTower)
-                        else if (UI.upgradeButton !== undefined) {
+                        // Adds upgradeButton to UI if tower is not at max rank
+                        if (newTower.rank < 3 && !UI.activeButton) {
+                            UI.addUpgradeButton(newTower)
+                            UI.activeButton = newTower
+                        }
+                        // If another upgradeButton already exists in UI, remove it and add new one
+                        else if (UI.activeButton !== newTower && newTower.rank < 3) {
                             UI.upgradeButton.destroy()
+                            UI.addUpgradeButton(newTower)
+                            UI.activeButton = newTower
                         }
                     });
                     if (!UI._scene.shiftKey.isDown) UI.placeholder.destroy(true);
@@ -87,7 +95,10 @@ class UserInterface {
         UI.upgradeButton = this._scene.add.rectangle(700, 550, 100, 50, 0x46cf6b).setInteractive()
         UI.upgradeButton.on("pointerdown", function (pointer) {
             // remove button if tower is fully upgraded(rank 3)
-            if (tower.upgrade() >= 2) UI.upgradeButton.destroy()
+            if (tower.upgrade() >= 2) {
+                UI.upgradeButton.destroy()
+                UI.activeButton = false
+            }
             // Update tower stats display
             UI._scene.towerStats.damage.setText("Damage: " + tower.damage)
             UI._scene.towerStats.range.setText("Range: " + tower.range)
