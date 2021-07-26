@@ -4,19 +4,23 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Initialization
     constructor(scene, x, y, enemyData, path) {
         super(scene, x, y, enemyData, path);
+        this.scene = scene;
+        this.path = path;
 
-        this.setTexture(enemyData.name)
+        this.setTexture(enemyData.name);
         this.scale = enemyData.scale;
+
         // Private Attributes
         this._name = enemyData.name;
         this._health = enemyData.health;
         this._damage = enemyData.damage;
         this._speed = enemyData.speed;
-        this.scene = scene
+        
 
-        // Instantiation into the game world
+        // Adds enemy to scene
         scene.add.existing(this);
-        var newEnemy = scene.physics.add.existing(this);
+        scene.registry.enemies.add(this);
+        
         // newEnemy.body.debugShowBody = false;
     }
 
@@ -37,7 +41,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         return this._speed;
     }
 
-
     // Public Methods
     isDead() {
         return this._health <= 0 ? true : false;
@@ -50,7 +53,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     die() {
         // TODO: death animation ?
-        this.scene.registry.managers["enemies"].remove(this, true, true);
+        this.scene.registry.enemies.remove(this, true, true);
     }
 
     update() {
@@ -61,14 +64,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.x = this.follower.vec.x;
         this.y = this.follower.vec.y;
         if (this.follower.t == 1) {
-            if (this.scene.registry.managers["towers"] !== undefined) {
-                this.scene.registry.managers["towers"].children.iterate(function (tower) {
-                    tower.enemiesInRange.delete(this);
-                });
-            }
-            this.scene.player.health -= this.damage
-            this.disableBody(true, true);
-            this.scene.registry.managers["enemies"].remove(this, true, true);
+            this.scene.registry.set('base_health', (this.scene.registry.get('base_health') - this._damage));
+            this.scene.registry.enemies.remove(this, true, true);
         }
     }
 
