@@ -21,8 +21,13 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
         this._cooldown = towerData.cooldown;
         this.scene = scene;
 
+        this.turret = new Phaser.Physics.Arcade.Sprite(scene, x, y, "basic_turret")
+        this.turret.isTracking = false
+        //this.turret.setTexture("basic_turret")
+
         // Adds enemy to scene
         scene.add.existing(this);
+        scene.add.existing(this.turret)
         scene.registry.towers.add(this);
 
         this.body.debugShowBody = false;
@@ -35,6 +40,10 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
     attackEnemies(bullets, enemies) {
         for (const enemy of enemies.children.entries) {
             if (Phaser.Math.Distance.Between(enemy.x, enemy.y, this.x, this.y) <= this.range) {
+                if (!this.turret.isTracking) {
+                    this.turret.setRotation(this.getTurretAngleToEnemy(enemy));
+                    this.turret.isTracking = true;
+                }
                 if (this.currentCD == 0) {
                     if (this.projectile !== null) {
                         this.scene.registry.bullets.add(new Bullet(this.scene, this, enemy));
@@ -48,6 +57,7 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
                 }
             }
         }
+        this.turret.isTracking = false;
         if (this.currentCD != 0) {
             this.currentCD += 1;
         }
@@ -56,6 +66,12 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
             // remove tint to show aoe tower is off cooldown
             this.clearTint();
         }
+    }
+
+    getTurretAngleToEnemy(enemy) {
+        let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.turret.x, this.turret.y) - (90 * (180/Math.PI))
+        console.log(angle)
+        return angle;
     }
 
     areaAttack() {
