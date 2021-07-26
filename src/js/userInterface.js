@@ -70,6 +70,9 @@ class UserInterface {
                         UI._scene.towerStats.range.setText("Range: " + newTower.range)
                         UI._scene.towerStats.attackSpeed.setText("Cooldown: " + newTower.cooldown / 60.0)
                         if (newTower.rank < 3) UI.addUpgradeButton(newTower)
+                        else if (UI.upgradeButton !== undefined) {
+                            UI.upgradeButton.destroy()
+                        }
                     });
                     if (!UI._scene.shiftKey.isDown) UI.placeholder.destroy(true);
                 }
@@ -81,10 +84,10 @@ class UserInterface {
     }
 
     addUpgradeButton(tower) {
-        let btn = this._scene.add.rectangle(700, 550, 100, 50, 0x46cf6b).setInteractive()
-        btn.on("pointerdown", function (pointer) {
+        UI.upgradeButton = this._scene.add.rectangle(700, 550, 100, 50, 0x46cf6b).setInteractive()
+        UI.upgradeButton.on("pointerdown", function (pointer) {
             // remove button if tower is fully upgraded(rank 3)
-            if (tower.upgrade() >= 2) btn.destroy()
+            if (tower.upgrade() >= 2) UI.upgradeButton.destroy()
             // Update tower stats display
             UI._scene.towerStats.damage.setText("Damage: " + tower.damage)
             UI._scene.towerStats.range.setText("Range: " + tower.range)
