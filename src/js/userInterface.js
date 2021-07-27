@@ -1,45 +1,119 @@
 const CELL_SIZE = 54;
 const CELL_OFFSET = CELL_SIZE / 2;
 
+// Theme colors (reused colors)
+const PRIMARY_COLOR = '0x949494';
+const STROKE_COLOR = 'black';
+const FOOTER_COLOR = 'white';
+const CREDITS_COLOR = 'yellow';
+
 class UserInterface {
     constructor(scene) {
         this._scene = scene;
         this.placeholder = null;
-        this.create();
-    }
 
-    create() {
-        UI = this
-        // Sidebar UI
-        // In current config, this starts at x = 594, and extends to the right
-        UI.sidebar = this._scene.add.rectangle(729, 300, 270, 600, 0x474c59);
-        UI._scene.towerStats = this._scene.add.rectangle(729, 550, 270, 300, 0x272c59)
-        UI._scene.towerStats.damage = this._scene.add.text(620, 420, "Damage")
-        UI._scene.towerStats.range = this._scene.add.text(620, 460, "Range")
-        UI._scene.towerStats.attackSpeed = this._scene.add.text(620, 500, "Attack Speed")
-        UI.activeButton = false
+        // UI region
+        this.hud = this._scene.add.rectangle(959, 639, 958, 98, PRIMARY_COLOR).setOrigin(1, 1);
+        this.hud.setStrokeStyle(2, 0xcbc9c9);
 
+        // Credits Value
+        this.credits_value = this._scene.add.text(20, 550, this._scene.registry.get('credits'), {
+            fontFamily: 'Verdana',
+            fontSize: '36px',
+            fontStyle: 'bold',
+            color: CREDITS_COLOR,
+            stroke: STROKE_COLOR,
+            strokeThickness: '4'
+        });
 
-        // Tower Placement Preview
-        this.addToUI(650, 150, "basic_tower")
-        this.addToUI(750, 150, "rapid_tower")
-        this.addToUI(650, 250, "aoe_tower")
+        // Credits Footer
+        this.health_footer = this._scene.add.text(25, 600, "Credits", { 
+            fontFamily: 'Verdana',
+            fontSize: '16px',
+            fontStyle: 'bold',
+            color: FOOTER_COLOR,
+            stroke: STROKE_COLOR,
+            strokeThickness: '2'
+        });
 
+        // ---------------------
+        // Tower icons & footers
+        // ---------------------
+        this.addTothis(150, 580, "basic_tower");
+        this.tower1_footer = this.health_footer = this._scene.add.text(130, 610, "100", { 
+            fontFamily: 'Verdana',
+            fontSize: '16px',
+            fontStyle: 'normal',
+            color: CREDITS_COLOR,
+            stroke: STROKE_COLOR,
+            strokeThickness: '2'
+        });
 
-        // Player Health
-        this._scene.add.text(674, 50, "Health: ");
-        this._healthDisplay = this._scene.add.text(754, 50, this._scene.registry.get('base_health'));
+        this.addTothis(220, 580, "rapid_tower");
+        this.tower2_footer = this.health_footer = this._scene.add.text(205, 610, "200", { 
+            fontFamily: 'Verdana',
+            fontSize: '16px',
+            fontStyle: 'normal',
+            color: CREDITS_COLOR,
+            stroke: STROKE_COLOR,
+            strokeThickness: '2'
+        });
+        
+        this.addTothis(290, 580, "aoe_tower");
+        this.tower3_footer = this.health_footer = this._scene.add.text(275, 610, "250", { 
+            fontFamily: 'Verdana',
+            fontSize: '16px',
+            fontStyle: 'normal',
+            color: CREDITS_COLOR,
+            stroke: STROKE_COLOR,
+            strokeThickness: '2'
+        });
+        // -----------------------
+
+        //this._scene.towerStats = this._scene.add.rectangle(729, 550, 1, 1, 0x272c59);
+        this.damage = this._scene.add.text(620, 420, "Damage");
+        this.range = this._scene.add.text(620, 460, "Range");
+        this.attackSpeed = this._scene.add.text(620, 500, "Attack Speed");
+        this.activeButton = false;       
+
+        // Health Value
+        this.health_value = this._scene.add.text(865, 550, this._scene.registry.get('base_health'), {
+            fontFamily: 'Verdana',
+            fontSize: '36px',
+            fontStyle: 'bold',
+            color: 'red',
+            stroke: STROKE_COLOR,
+            strokeThickness: '4'
+        });
+
+        // Health Footer
+        this.health_footer = this._scene.add.text(860, 600, "Health", { 
+            fontFamily: 'Verdana',
+            fontSize: '16px',
+            fontStyle: 'bold',
+            color: FOOTER_COLOR,
+            stroke: STROKE_COLOR,
+            strokeThickness: '2'
+        });
 
         // Updates display of health when health changes
-        this._scene.registry.events.on('changedata', this.updateHealth, this);
+        this._scene.registry.events.on('changedata', this.updateValues, this);
+
     }
 
-    // Triggered when health value changes
-    updateHealth(parent, key, data) {
-        this._healthDisplay.setText(data);
+    // Triggered when health or credit values change
+    // Not sure how efficient this really is
+    updateValues(parent, key, data) {
+        switch(key){
+            case 'base_health':
+                this.health_value.setText(data);
+                break;
+            case 'credits':
+                this.credits_value.setText(data);
+                break;
+        }
+        
     }
-
-
 
     update() {
         //console.log("MouseX: " + String(this._scene.game.input.mousePointer.worldX) + " MouseY: " + String(this._scene.game.input.mousePointer.worldY))
@@ -48,61 +122,58 @@ class UserInterface {
             this.placeholder.x = Math.floor(this._scene.game.input.mousePointer.worldX / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
             this.placeholder.y = Math.floor(this._scene.game.input.mousePointer.worldY / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
         }
-
-        // Update player health info
-        //this._healthDisplay.setText(this._scene.registry.health);
     }
 
-    addToUI(x, y, towerName) {
+    addTothis(x, y, towerName) {
         var tower_select = this._scene.add.sprite(x, y, towerName).setInteractive();
         tower_select.on("pointerdown", function (pointer) {
 
-            UI.placeholder = UI._scene.add.sprite(x, y, towerName).setInteractive();
-            UI.placeholder.scale = 1;
-            UI.placeholder.alpha = 0.5;
-            UI.placeholder.on("pointerdown", function (pointer) {
-                if (UI.placeholder.x <= (UI.sidebar.x - UI.sidebar.geom.centerX)) {  // Stops towers from being placed out of bounds on sidebar
-                    var newTowerX = Math.floor(UI.placeholder.x / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
-                    var newTowerY = Math.floor(UI.placeholder.y / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
-                    var newTower = UI._scene.addTower(newTowerX, newTowerY, towerName);
+            this.placeholder = this._scene.add.sprite(x, y, towerName).setInteractive();
+            this.placeholder.scale = 1;
+            this.placeholder.alpha = 0.5;
+            this.placeholder.on("pointerdown", function (pointer) {
+                if (this.placeholder.x <= (this.sidebar.x - this.sidebar.geom.centerX)) {  // Stops towers from being placed out of bounds on sidebar
+                    var newTowerX = Math.floor(this.placeholder.x / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
+                    var newTowerY = Math.floor(this.placeholder.y / CELL_SIZE) * CELL_SIZE + CELL_OFFSET
+                    var newTower = this._scene.addTower(newTowerX, newTowerY, towerName);
                     // Shows tower stats when selecting tower.
                     newTower.on("pointerdown", function (pointer) {
-                        UI._scene.towerStats.damage.setText("Damage: " + newTower.damage)
-                        UI._scene.towerStats.range.setText("Range: " + newTower.range)
-                        UI._scene.towerStats.attackSpeed.setText("Cooldown: " + newTower.cooldown / 60.0)
-                        // Adds upgradeButton to UI if tower is not at max rank
-                        if (newTower.rank < 3 && !UI.activeButton) {
-                            UI.addUpgradeButton(newTower)
-                            UI.activeButton = newTower
+                        this._scene.towerStats.damage.setText("Damage: " + newTower.damage)
+                        this._scene.towerStats.range.setText("Range: " + newTower.range)
+                        this._scene.towerStats.attackSpeed.setText("Cooldown: " + newTower.cooldown / 60.0)
+                        // Adds upgradeButton to this if tower is not at max rank
+                        if (newTower.rank < 3 && !this.activeButton) {
+                            this.addUpgradeButton(newTower)
+                            this.activeButton = newTower
                         }
-                        // If another upgradeButton already exists in UI, remove it and add new one
-                        else if (UI.activeButton !== newTower && newTower.rank < 3) {
-                            UI.upgradeButton.destroy()
-                            UI.addUpgradeButton(newTower)
-                            UI.activeButton = newTower
+                        // If another upgradeButton already exists in this, remove it and add new one
+                        else if (this.activeButton !== newTower && newTower.rank < 3) {
+                            this.upgradeButton.destroy()
+                            this.addUpgradeButton(newTower)
+                            this.activeButton = newTower
                         }
                     });
-                    if (!UI._scene.shiftKey.isDown) UI.placeholder.destroy(true);
+                    if (!this._scene.shiftKey.isDown) this.placeholder.destroy(true);
                 }
                 else {
-                    UI.placeholder.destroy(true);
+                    this.placeholder.destroy(true);
                 }
             });
         });
     }
 
     addUpgradeButton(tower) {
-        UI.upgradeButton = this._scene.add.rectangle(700, 550, 100, 50, 0x46cf6b).setInteractive()
-        UI.upgradeButton.on("pointerdown", function (pointer) {
+        this.upgradeButton = this._scene.add.rectangle(700, 550, 100, 50, 0x46cf6b).setInteractive()
+        this.upgradeButton.on("pointerdown", function (pointer) {
             // remove button if tower is fully upgraded(rank 3)
             if (tower.upgrade() >= 2) {
-                UI.upgradeButton.destroy()
-                UI.activeButton = false
+                this.upgradeButton.destroy()
+                this.activeButton = false
             }
             // Update tower stats display
-            UI._scene.towerStats.damage.setText("Damage: " + tower.damage)
-            UI._scene.towerStats.range.setText("Range: " + tower.range)
-            UI._scene.towerStats.attackSpeed.setText("Cooldown: " + tower.cooldown / 60.0)
+            this._scene.towerStats.damage.setText("Damage: " + tower.damage)
+            this._scene.towerStats.range.setText("Range: " + tower.range)
+            this._scene.towerStats.attackSpeed.setText("Cooldown: " + tower.cooldown / 60.0)
         });
     }
 

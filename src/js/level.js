@@ -76,9 +76,22 @@ class LevelScene extends Phaser.Scene {
 
         this._enemyManager.addToPath(this, path, "test_enemy");
 
+        // -------------------------
+        // DEBUG Tools
+        // -------------------------
         // Spawn an enemy manually
         this.input.keyboard.on('keydown-A', () => {
             this._enemyManager.addToPath(this, path, "test_enemy")
+        }, this);
+
+        // Click on a spot to print x/y coordinates to console.
+        this.input.on('pointerdown', function(pointer){
+            console.log(pointer.x, pointer.y);
+        });
+
+        // Increase credits
+        this.input.keyboard.on('keydown-C', () => {
+            this.registry.set('credits', this.registry.get('credits') + 1000);
         }, this);
     }
 
