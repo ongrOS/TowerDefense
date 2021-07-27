@@ -90,7 +90,7 @@ class LevelScene extends Phaser.Scene {
         }, this);
 
         // Click on a spot to print x/y coordinates to console.
-        this.input.on('pointerdown', function(pointer){
+        this.input.on('pointerdown', function (pointer) {
             console.log(pointer.x, pointer.y);
         });
 
@@ -107,7 +107,7 @@ class LevelScene extends Phaser.Scene {
     // Actions
     nextWave() {
         this._currentWaveIndex += 1;
-        if (this._currentWaveIndex < this._waveCount){
+        if (this._currentWaveIndex < this._waveCount) {
             this.startWave(this._currentWaveIndex)
             console.log("Starting Wave: " + String(this._currentWaveIndex))
         } else {
@@ -124,16 +124,18 @@ class LevelScene extends Phaser.Scene {
     // Wave Functions
     startWave(waveNumber) {
         var waveRecord = this._waveData[waveNumber]
-        var enemyCount = waveRecord[0] - 1
-        var enemyType = waveRecord[1]
-        var spawnDelay = waveRecord[2]
-        var waveTimer = this.time.addEvent({
-            delay: spawnDelay,
-            callback: this._enemyManager.addToPath,
-            args: [this, this.path, enemyType],
-            callbackScope: this._enemyManager,
-            repeat: enemyCount
-        })
+        for (const wave of waveRecord) {
+            var enemyCount = wave[0] - 1
+            var enemyType = wave[1]
+            var spawnDelay = wave[2]
+            var waveTimer = this.time.addEvent({
+                delay: spawnDelay,
+                callback: this._enemyManager.addToPath,
+                args: [this, this.path, enemyType],
+                callbackScope: this._enemyManager,
+                repeat: enemyCount
+            })
+        }
     }
 
 
