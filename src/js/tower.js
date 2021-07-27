@@ -70,7 +70,6 @@ class Tower extends Phaser.Physics.Arcade.Sprite {
 
     getTurretAngleToEnemy(enemy) {
         let angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.turret.x, this.turret.y) - (90 * (180/Math.PI))
-        console.log(angle)
         return angle;
     }
 

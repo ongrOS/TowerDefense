@@ -15,6 +15,12 @@ class LevelScene extends Phaser.Scene {
 
         // Private scene properties
         this._levelData = levelData;
+
+        // Wave Data
+        this._waveData = this._levelData.waveData
+        this._currentWaveIndex = -1
+        this._currentWave = this._waveData[this._currentWaveIndex]
+        this._waveCount = this._waveData.length
     }
 
     init() {
@@ -72,16 +78,15 @@ class LevelScene extends Phaser.Scene {
                 path.startY = lineData[1];
             }
         }
+        this.path = path
         // DEBUG: path.draw(graphics);
-
-        this._enemyManager.addToPath(this, path, "test_enemy");
-
         // -------------------------
         // DEBUG Tools
         // -------------------------
         // Spawn an enemy manually
         this.input.keyboard.on('keydown-A', () => {
-            this._enemyManager.addToPath(this, path, "test_enemy")
+            //this._enemyManager.addToPath(this, path, "test_enemy")
+            this.nextWave()
         }, this);
 
         // Click on a spot to print x/y coordinates to console.
@@ -101,12 +106,37 @@ class LevelScene extends Phaser.Scene {
 
     // Actions
     nextWave() {
-        WaveManager.nextWave()
+        this._currentWaveIndex += 1;
+        if (this._currentWaveIndex < this._waveCount){
+            this.startWave(this._currentWaveIndex)
+            console.log("Starting Wave: " + String(this._currentWaveIndex))
+        } else {
+            // DEBUG, reset waves
+            this._currentWaveIndex = -1
+            this.nextWave()
+        }
     }
 
     addTower(x, y, towerName) {
         return this._towerManager.addTower(x, y, towerName)
     }
+
+    // Wave Functions
+    startWave(waveNumber) {
+        var waveRecord = this._waveData[waveNumber]
+        var enemyCount = waveRecord[0] - 1
+        var enemyType = waveRecord[1]
+        var spawnDelay = waveRecord[2]
+        var waveTimer = this.time.addEvent({
+            delay: spawnDelay,
+            callback: this._enemyManager.addToPath,
+            args: [this, this.path, enemyType],
+            callbackScope: this._enemyManager,
+            repeat: enemyCount
+        })
+    }
+
+
 }
 
 export default LevelScene;
