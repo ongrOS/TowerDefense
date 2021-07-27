@@ -2,12 +2,16 @@ const CELL_SIZE = 54;
 const CELL_OFFSET = CELL_SIZE / 2;
 
 // Theme colors
-const PRIMARY_COLOR = '0xedf4ff';
-const STROKE_COLOR = 'black';
+const HUD_COLOR = '0xedf4ff';
+const HUD_STROKE_COLOR = '0x696969';
+const STROKE_COLOR = 'black';  // Default stroke color that stands out from HUD background
 const TITLE_COLOR = 'blue';
 const TITLE_STROKE_COLOR = 'cyan';
 const CREDITS_COLOR = 'yellow';
 const HEALTH_COLOR = 'red';
+const DETAILS_BACKGROUND_COLOR = 'black';
+const DETAILS_TEXT_COLOR = 'lime';
+const DETAILS_STROKE_COLOR = '0x00FF00';
 
 class UserInterface {
     constructor(scene) {
@@ -18,11 +22,31 @@ class UserInterface {
         // NOTE: Creating UI from left to right
 
         // UI region
-        this.hud = this._scene.add.rectangle(959, 639, 958, 98, PRIMARY_COLOR).setOrigin(1, 1);
-        this.hud.setStrokeStyle(2, '0x696969');
+        this.hud = this._scene.add.rectangle(959, 639, 958, 98, HUD_COLOR).setOrigin(1, 1);
+        this.hud.setStrokeStyle(2, HUD_STROKE_COLOR);
+
+        // Health Value
+        this.healthValue = this._scene.add.text(25, 550, this._scene.registry.get('base_health'), {
+            fontFamily: 'Verdana',
+            fontSize: '36px',
+            fontStyle: 'bold',
+            color: HEALTH_COLOR,
+            stroke: STROKE_COLOR,
+            strokeThickness: '4'
+        });
+
+        // Health Title
+        this.healthTitle = this._scene.add.text(30, 600, "Health", { 
+            fontFamily: 'Verdana',
+            fontSize: '16px',
+            fontStyle: 'bold',
+            color: TITLE_COLOR,
+            stroke: TITLE_STROKE_COLOR,
+            strokeThickness: '2'
+        });
 
         // Credits Value
-        this.creditsValue = this._scene.add.text(20, 550, this._scene.registry.get('credits'), {
+        this.creditsValue = this._scene.add.text(200, 550, this._scene.registry.get('credits'), {
             fontFamily: 'Verdana',
             fontSize: '36px',
             fontStyle: 'bold',
@@ -32,7 +56,7 @@ class UserInterface {
         });
 
         // Credits Title
-        this.healthTitle = this._scene.add.text(30, 600, "Credits", { 
+        this.creditsTitle = this._scene.add.text(225, 600, "Credits", { 
             fontFamily: 'Verdana',
             fontSize: '16px',
             fontStyle: 'bold',
@@ -44,8 +68,8 @@ class UserInterface {
         // ---------------------
         // Tower icons & titles
         // ---------------------
-        this.addTothis(this, 200, 580, "basic_tower");
-        this.tower1Title = this.healthTitle = this._scene.add.text(180, 610, "100", { 
+        this.addTothis(this, 400, 580, "basic_tower");
+        this.tower1Title = this._scene.add.text(385, 610, "100", { 
             fontFamily: 'Verdana',
             fontSize: '16px',
             fontStyle: 'normal',
@@ -54,8 +78,8 @@ class UserInterface {
             strokeThickness: '2'
         });
 
-        this.addTothis(this, 270, 580, "rapid_tower");
-        this.tower2Title = this.healthTitle = this._scene.add.text(255, 610, "200", { 
+        this.addTothis(this, 500, 580, "rapid_tower");
+        this.tower2Title = this._scene.add.text(485, 610, "200", { 
             fontFamily: 'Verdana',
             fontSize: '16px',
             fontStyle: 'normal',
@@ -64,8 +88,8 @@ class UserInterface {
             strokeThickness: '2'
         });
         
-        this.addTothis(this, 340, 580, "aoe_tower");
-        this.tower3Title = this.healthTitle = this._scene.add.text(325, 610, "250", { 
+        this.addTothis(this, 600, 580, "aoe_tower");
+        this.tower3Title  = this._scene.add.text(585, 610, "250", { 
             fontFamily: 'Verdana',
             fontSize: '16px',
             fontStyle: 'normal',
@@ -74,30 +98,30 @@ class UserInterface {
             strokeThickness: '2'
         });
         // -----------------------
+        
+        // Tower Details Background
+        this.details = this._scene.add.rectangle(956, 635, 300, 90, DETAILS_BACKGROUND_COLOR).setOrigin(1, 1);
+        this.details.setStrokeStyle(2, DETAILS_STROKE_COLOR);
 
-        //this._scene.towerStats = this._scene.add.rectangle(729, 550, 1, 1, 0x272c59);
-        this.damage = this._scene.add.text(620, 420, "Damage");
-        this.range = this._scene.add.text(620, 460, "Range");
-        this.attackSpeed = this._scene.add.text(620, 500, "Attack Speed");      
-
-        // Health Value
-        this.healthValue = this._scene.add.text(865, 550, this._scene.registry.get('base_health'), {
+        // Damage Title + Value
+        this.damageTitle = this._scene.add.text(665, 555, 'Damage:', {
             fontFamily: 'Verdana',
-            fontSize: '36px',
-            fontStyle: 'bold',
-            color: HEALTH_COLOR,
-            stroke: 'STROKE_COLOR',
-            strokeThickness: '4'
+            fontSize: '12px',
+            color: DETAILS_TEXT_COLOR
         });
 
-        // Health Title
-        this.healthTitle = this._scene.add.text(860, 600, "Health", { 
+        // Range Title + Value
+        this.rangeTitle = this._scene.add.text(665, 580, 'Range:', {
             fontFamily: 'Verdana',
-            fontSize: '16px',
-            fontStyle: 'bold',
-            color: TITLE_COLOR,
-            stroke: TITLE_STROKE_COLOR,
-            strokeThickness: '2'
+            fontSize: '12px',
+            color: DETAILS_TEXT_COLOR
+        });
+
+        // Attack Speed + Title
+        this.attackSpeedTitle = this._scene.add.text(665, 605, 'Attack Speed:', {
+            fontFamily: 'Verdana',
+            fontSize: '12px',
+            color: DETAILS_TEXT_COLOR
         });
 
         // Updates display of health and credit values when they change.
@@ -149,9 +173,9 @@ class UserInterface {
                     // Shows tower stats when selecting tower.
                     newTower.on("pointerdown", function (pointer) {
                         // Updates tower stat towerParent
-                        towerParent._scene.damage.setText("Damage: " + newTower.damage);
-                        towerParent._scene.range.setText("Range: " + newTower.range);
-                        towerParent._scene.attackSpeed.setText("Cooldown: " + newTower.cooldown / 60.0);
+                        towerParent.damageTitle.setText("Damage: " + newTower.damage);
+                        towerParent.rangeTitle.setText("Range: " + newTower.range);
+                        towerParent.attackSpeedTitle.setText("Cooldown: " + newTower.cooldown / 60.0);
 
                         // Adds upgradeButton to towerParent if tower is not at max rank
                         if (newTower.rank < 3 && !towerParent.activeButton) {
@@ -179,7 +203,7 @@ class UserInterface {
 
     // Adds upgrade button to UI
     addUpgradeButton(buttonParent, tower) {
-        buttonParent.upgradeButton = buttonParent._scene.add.rectangle(700, 550, 100, 50, 0x46cf6b).setInteractive();
+        buttonParent.upgradeButton = buttonParent._scene.add.rectangle(945, 625, 70, 70, '0x44ff00').setOrigin(1, 1).setInteractive();
 
         // Upgrades tower and updates text
         buttonParent.upgradeButton.on("pointerdown", function (pointer) {
@@ -190,9 +214,9 @@ class UserInterface {
             }
 
             // Update tower stats display
-            buttonParent._scene.towerStats.damage.setText("Damage: " + tower.damage);
-            buttonParent._scene.towerStats.range.setText("Range: " + tower.range);
-            buttonParent._scene.towerStats.attackSpeed.setText("Cooldown: " + tower.cooldown / 60.0);
+            buttonParent.damageTitle.setText("Damage: " + tower.damage);
+            buttonParent.rangeTitle.setText("Range: " + tower.range);
+            buttonParent.attackSpeedTitle.setText("Cooldown: " + tower.cooldown / 60.0);
         });
     }
 
