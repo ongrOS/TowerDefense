@@ -1,5 +1,5 @@
 // Importing only necessary assets
-import background from '../assets/background.png'
+import background from '../assets/backgrounds/menu_background.png'
 
 // const UserInterface = require("./userInterface.js");
 
